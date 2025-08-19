@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShaSea Fisheries - Admin Orders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep: #0a3d62;
+      --aqua: #00a8cc;
+      --foam: #e6f7fb;
+      --white: #ffffff;
+      --gray: #e9eef3;
+      --text: #0d1b2a;
+      --accent: #2ed1c9;
+      --danger: #d9534f;
+      --shadow: 0 10px 20px rgba(10,61,98,.12);
+      --radius: 16px;
+    }
+    
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', sans-serif;
+      background: #f7fbfd;
+    }
+    
+    /* Admin Header */
+    .admin-header {
+      background: var(--deep);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .admin-nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+    }
+    
+    /* Orders Table */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .orders-table th, .orders-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--gray);
+    }
+    
+    .orders-table th {
+      background: var(--deep);
+      color: white;
+      font-weight: 600;
+    }
+    
+    .orders-table tr:hover {
+      background: var(--foam);
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .view-btn {
+      background: var(--aqua);
+      color: white;
+    }
+    
+    .complete-btn {
+      background: #28a745;
+      color: white;
+    }
+    
+    /* Search and Filter */
+    .search-filter {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-filter input, .search-filter select {
+      padding: 0.75rem;
+      border: 1px solid var(--gray);
+      border-radius: var(--radius);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .search-filter input {
+      flex: 1;
+      max-width: 300px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .orders-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="brand">ShaSea Fisheries - Admin</div>
+    <nav class="admin-nav">
+      <a href="admin-dashboard.html">Dashboard</a>
+      <a href="admin-orders.html" class="active">Orders</a>
+      <a href="admin-products.html">Products</a>
+      <a href="index.html">Back to Site</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>Order Management</h1>
+    
+    <div class="search-filter">
+      <input type="text" id="searchInput" placeholder="Search orders...">
+      <select id="statusFilter">
+        <option value="all">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+    
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order Ref</th>
+          <th>Customer</th>
+          <th>Products</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTableBody">
+        <!-- Orders will be loaded here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Order Details Modal (hidden by default) -->
+  <div id="orderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:white; padding:2rem; border-radius:var(--radius); max-width:800px; width:90%; max-height:90vh; overflow:auto;">
+      <h2 id="modalOrderRef">Order #12345</h2>
+      <div id="modalOrderDetails"></div>
+      <button onclick="closeModal()" style="margin-top:1rem; padding:0.75rem 1.5rem; background:var(--deep); color:white; border:none; border-radius:var(--radius); cursor:pointer;">Close</button>
+    </div>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+   // Initialize Supabase
+const supabaseUrl = 'https://ripzmgoqtpsejmyzkhde.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcHptZ29xdHBzZWpteXpraGRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTc4NTgsImV4cCI6MjA3MDY5Mzg1OH0.OH-HTDASDnuWZ9lbPtttWqXBszgyvP5KtVfmj04R8Ck';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+// DOM Elements
+const ordersTableBody = document.getElementById('ordersTableBody');
+const searchInput = document.getElementById('searchInput');
+const statusFilter = document.getElementById('statusFilter');
+const orderModal = document.getElementById('orderModal');
+const modalOrderRef = document.getElementById('modalOrderRef');
+const modalOrderDetails = document.getElementById('modalOrderDetails');
+
+// Debug function to check Supabase connection
+async function testSupabaseConnection() {
+    try {
+        console.log("Testing Supabase connection...");
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .limit(1);
+
+        if (error) {
+            console.error("Supabase connection error:", error);
+            return false;
+        }
+
+        console.log("Supabase connection successful. Sample data:", data);
+        return true;
+    } catch (err) {
+        console.error("Error testing Supabase connection:", err);
+        return false;
+    }
+}
+
+// Enhanced load orders function
+async function loadOrders() {
+    console.log("Loading orders...");
+    
+    // First verify connection
+    const connectionOk = await testSupabaseConnection();
+    if (!connectionOk) {
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="error-message">
+                    Could not connect to database. Please check console for details.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    try {
+        // Fetch orders with product details
+        console.log("Fetching orders from database...");
+        const { data: orders, error } = await supabase
+            .from('orders')
+            .select(`
+                id,
+                order_ref,
+                product_id,
+                quantity_kg,
+                price_at_order,
+                line_total,
+                customer_name,
+                customer_phone,
+                address,
+                payment_method,
+                status,
+                created_at,
+                products:product_id (name, image_url)
+            `)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Database query error:", error);
+            throw error;
+        }
+
+        console.log("Orders retrieved:", orders);
+        
+        if (!orders || orders.length === 0) {
+            console.log("No orders found in database");
+            ordersTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-message">
+                        No orders found in the system.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        renderOrders(orders);
+    } catch (error) {
+        console.error("Error loading orders:", error);
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="error-message">
+                    Error loading orders: ${error.message || 'Unknown error'}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// More robust renderOrders function
+function renderOrders(orders) {
+    try {
+        console.log("Rendering orders to table...");
+        
+        // Validate orders data
+        if (!Array.isArray(orders)) {
+            throw new Error("Invalid orders data format");
+        }
+
+        // Group orders by order_ref with validation
+        const groupedOrders = orders.reduce((acc, order) => {
+            // Skip invalid orders
+            if (!order || typeof order !== 'object') {
+                console.warn("Invalid order skipped:", order);
+                return acc;
+            }
+
+            // Ensure required fields exist
+            if (!order.order_ref) {
+                console.warn("Order missing order_ref:", order);
+                return acc;
+            }
+
+            // Initialize group if not exists
+            if (!acc[order.order_ref]) {
+                acc[order.order_ref] = {
+                    order_ref: order.order_ref,
+                    customer_name: order.customer_name || 'N/A',
+                    customer_phone: order.customer_phone || 'N/A',
+                    status: order.status || 'Pending',
+                    created_at: order.created_at,
+                    items: [],
+                    total: 0
+                };
+            }
+
+            // Add item to group
+            const validItem = {
+                product_id: order.product_id,
+                product_name: order.products?.name || 'Unknown Product',
+                quantity_kg: parseFloat(order.quantity_kg) || 0,
+                price_at_order: parseFloat(order.price_at_order) || 0,
+                line_total: parseFloat(order.line_total) || 0,
+                image_url: order.products?.image_url || ''
+            };
+
+            acc[order.order_ref].items.push(validItem);
+            acc[order.order_ref].total += validItem.line_total;
+
+            return acc;
+        }, {});
+
+        const orderGroups = Object.values(groupedOrders);
+        console.log("Grouped orders:", orderGroups);
+
+        if (orderGroups.length === 0) {
+            ordersTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-message">
+                        No valid orders to display.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Sort by date (newest first)
+        orderGroups.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        // Render the table rows
+        ordersTableBody.innerHTML = orderGroups.map(order => {
+            const orderDate = order.created_at ? new Date(order.created_at).toLocaleString() : 'N/A';
+            const statusClass = order.status === 'Completed' ? 'status-completed' : 'status-pending';
+            
+            return `
+                <tr>
+                    <td>${order.order_ref}</td>
+                    <td>
+                        <strong>${order.customer_name}</strong><br>
+                        ${order.customer_phone}
+                    </td>
+                    <td>${order.items.length} item(s)</td>
+                    <td>GHS ${order.total.toFixed(2)}</td>
+                    <td>${orderDate}</td>
+                    <td>
+                        <span class="status ${statusClass}">
+                            ${order.status}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button class="action-btn view-btn" 
+                                onclick="viewOrderDetails('${order.order_ref}')"
+                                title="View order details">
+                            View
+                        </button>
+                        ${order.status !== 'Completed' ? `
+                        <button class="action-btn complete-btn" 
+                                onclick="markAsCompleted('${order.order_ref}')"
+                                title="Mark as completed">
+                            Complete
+                        </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error("Error rendering orders:", error);
+        ordersTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="error-message">
+                    Error displaying orders: ${error.message || 'Unknown error'}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Enhanced viewOrderDetails function
+async function viewOrderDetails(orderRef) {
+    try {
+        console.log(`Fetching details for order ${orderRef}...`);
+        
+        if (!orderRef) {
+            throw new Error("No order reference provided");
+        }
+
+        const { data: orders, error } = await supabase
+            .from('orders')
+            .select(`
+                id,
+                order_ref,
+                product_id,
+                quantity_kg,
+                price_at_order,
+                line_total,
+                customer_name,
+                customer_phone,
+                address,
+                payment_method,
+                status,
+                created_at,
+                products:product_id (name, image_url)
+            `)
+            .eq('order_ref', orderRef);
+
+        if (error) throw error;
+
+        if (!orders || orders.length === 0) {
+            throw new Error("No order found with that reference");
+        }
+
+        console.log(`Order ${orderRef} details:`, orders);
+        
+        // Prepare order details
+        const order = {
+            ...orders[0],
+            items: orders.map(item => ({
+                product_name: item.products?.name || 'Unknown Product',
+                quantity_kg: item.quantity_kg,
+                price_at_order: item.price_at_order,
+                line_total: item.line_total,
+                image_url: item.products?.image_url || ''
+            })),
+            total: orders.reduce((sum, item) => sum + (item.line_total || 0), 0)
+        };
+
+        // Display in modal
+        modalOrderRef.textContent = `Order #${orderRef}`;
+        modalOrderDetails.innerHTML = `
+            <div class="order-section">
+                <h3>Customer Information</h3>
+                <p><strong>Name:</strong> ${order.customer_name || 'N/A'}</p>
+                <p><strong>Phone:</strong> ${order.customer_phone || 'N/A'}</p>
+                <p><strong>Address:</strong> ${order.address || 'N/A'}</p>
+                <p><strong>Payment Method:</strong> ${order.payment_method || 'N/A'}</p>
+                <p><strong>Status:</strong> <span class="status ${order.status === 'Completed' ? 'status-completed' : 'status-pending'}">${order.status || 'Pending'}</span></p>
+                <p><strong>Order Date:</strong> ${order.created_at ? new Date(order.created_at).toLocaleString() : 'N/A'}</p>
+            </div>
+            
+            <div class="order-section">
+                <h3>Order Items</h3>
+                <table class="order-items">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${order.items.map(item => `
+                            <tr>
+                                <td>${item.product_name}</td>
+                                <td>${item.quantity_kg} kg</td>
+                                <td>GHS ${item.price_at_order.toFixed(2)}</td>
+                                <td>GHS ${item.line_total.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="total-label">Order Total:</td>
+                            <td class="total-value">GHS ${order.total.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        `;
+
+        orderModal.style.display = 'flex';
+    } catch (error) {
+        console.error("Error viewing order details:", error);
+        alert(`Error loading order details: ${error.message || 'Please try again'}`);
+    }
+}
+
+// Enhanced markAsCompleted function
+async function markAsCompleted(orderRef) {
+    try {
+        if (!orderRef) {
+            throw new Error("No order reference provided");
+        }
+
+        if (!confirm(`Are you sure you want to mark order ${orderRef} as completed?`)) {
+            return;
+        }
+
+        console.log(`Marking order ${orderRef} as completed...`);
+        const { error } = await supabase
+            .from('orders')
+            .update({ status: 'Completed' })
+            .eq('order_ref', orderRef);
+
+        if (error) throw error;
+
+        console.log(`Order ${orderRef} marked as completed successfully`);
+        alert('Order status updated successfully!');
+        loadOrders(); // Refresh the orders list
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        alert(`Error updating order: ${error.message || 'Please try again'}`);
+    }
+}
+
+// Close modal
+function closeModal() {
+    orderModal.style.display = 'none';
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Admin orders page initialized");
+    loadOrders();
+    
+    // Search functionality
+    searchInput.addEventListener('input', debounce(() => {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const rows = ordersTableBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    }, 300));
+    
+    // Status filter
+    statusFilter.addEventListener('change', () => {
+        const status = statusFilter.value;
+        const rows = ordersTableBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            if (status === 'all') {
+                row.style.display = '';
+            } else {
+                const statusElement = row.querySelector('.status');
+                const rowStatus = statusElement ? statusElement.textContent.toLowerCase() : '';
+                row.style.display = rowStatus.includes(status) ? '' : 'none';
+            }
+        });
+    });
+});
+
+// Utility function for debouncing
+function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+  </script>
+</body>
+</html>

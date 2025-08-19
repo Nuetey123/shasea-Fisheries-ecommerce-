@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShaSea fisheriesies LTD – Fresh from the Sea to Your Table</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --deep: #0a3d62; /* deep blue */
+      --aqua: #00a8cc; /* aqua */
+      --foam: #e6f7fb; /* light aqua background */
+      --white: #ffffff;
+      --gray: #e9eef3;
+      --text: #0d1b2a;
+      --accent: #2ed1c9; /* soft teal */
+      --danger: #d9534f;
+      --shadow: 0 10px 20px rgba(10,61,98,.12);
+      --radius: 16px;
+    }
+    *{ box-sizing: border-box; }
+    html, body{ margin:0; padding:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); background: #f7fbfd; }
+
+    /* Header */
+    header{
+      position: sticky; top:0; z-index:1000; backdrop-filter: blur(6px);
+      background: rgba(255,255,255,.9); border-bottom: 1px solid #eef3f7;
+    }
+    .nav{ max-width: 1200px; margin:0 auto; padding: 12px 20px; display:flex; align-items:center; justify-content:space-between; }
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:700; font-size:1.1rem; color: var(--deep); }
+
+    nav ul{ list-style:none; display:flex; gap:18px; padding:0; margin:0; align-items:center; }
+    nav a{ text-decoration:none; color:#123; font-weight:500; padding:8px 12px; border-radius: 12px; }
+    nav a:hover{ background: var(--foam); }
+    .btn{ display:inline-flex; align-items:center; gap:8px; border:none; border-radius: 14px; padding:10px 14px; cursor:pointer; font-weight:600; box-shadow: var(--shadow); }
+    .btn-primary{ background: var(--deep); color:white; }
+    .btn-secondary{ background: var(--aqua); color:white; }
+    .btn-danger{ background: var(--danger); color:white; }
+    .pill{ background: var(--foam); color: var(--deep); border-radius: 999px; padding:6px 10px; font-size:.8rem; }
+
+    /* Hero */
+    .hero{ max-width: 1200px; margin: 22px auto; padding: 24px 20px; display:grid; grid-template-columns: 1.2fr 1fr; gap: 26px; align-items:center; }
+    .hero-card{ background:linear-gradient(180deg, #eaf9ff, #ffffff); border:1px solid #e6f1f7; border-radius: var(--radius); padding: 34px; box-shadow: var(--shadow); }
+    .hero h1{ margin:0 0 12px; font-size: clamp(1.6rem, 3.5vw, 2.6rem); color: var(--deep); }
+    .hero p{ margin:0 0 18px; color:#244; }
+    .hero-cta{ display:flex; flex-wrap:wrap; gap:12px; }
+    .hero img{ width:100%; border-radius: var(--radius); box-shadow: var(--shadow); object-fit:cover; height: 320px; }
+
+    /* Sections */
+    .container{ max-width:1200px; margin: 0 auto; padding: 10px 20px 40px; }
+    .section-title{ display:flex; align-items:center; justify-content:space-between; gap: 16px; margin: 24px 0 10px; }
+    .section-title h2{ margin:0; color: var(--deep); }
+
+    /* Product Grid */
+    .grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 1024px){ .grid{ grid-template-columns: repeat(3, 1fr);} }
+    @media (max-width: 768px){ .hero{ grid-template-columns: 1fr; } .grid{ grid-template-columns: repeat(2, 1fr);} }
+    @media (max-width: 520px){ .grid{ grid-template-columns: 1fr; } }
+    #featured {
+  background: var(--foam);
+  padding: 30px 20px;
+  border-radius: var(--radius);
+  margin: 40px auto;
+}
+#featuredGrid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 20px 0;
+  scroll-snap-type: x mandatory;
+}
+
+#featuredGrid .card {
+  min-width: 280px;
+  scroll-snap-align: start;
+}
+#featured .section-title h2 {
+  font-size: 1.8rem;
+  color: var(--deep);
+}
+    .card {
+  background: white;
+  border: 1px solid #e6eef5;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensures all cards are equal height */
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card .content {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1; /* Makes content area fill available space */
+}
+
+/* Add these new styles */
+.card .content > *:not(.qty-row) {
+  flex-shrink: 0; /* Prevents other elements from growing */
+}
+
+.qty-row {
+  margin-top: auto; /* Pushes to bottom */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 8px; /* Optional spacing */
+}
+
+.qty-row input[type="number"] {
+  width: 70px;
+  padding: 8px 6px;
+  flex-shrink: 0;
+}
+
+.qty-row .btn {
+  flex: 1;
+  min-width: 0; /* Allows button to shrink if needed */
+}
+    .price{ font-weight:700; color: var(--deep); }
+    .availability{ font-size:.85rem; }
+    .in{ color:#218838; }
+    .out{ color:#a33; }
+    .qty-row{ display:flex; gap:10px; align-items:center; }
+    input[type="number"]{ width: 90px; padding:8px 10px; border-radius: 12px; border:1px solid #cdd9e3; }
+
+    /* Cart + Checkout */
+    .bar{ position: sticky; bottom: 16px; z-index: 999; display:flex; justify-content:center; }
+    .cart-bar{ background: var(--deep); color:white; padding: 12px 16px; border-radius: 999px; box-shadow: var(--shadow); display:flex; align-items:center; gap:12px; }
+
+    .drawer{ position: fixed; right: 0; top:0; height:100%; width: 380px; max-width: 100%; background:white; border-left:1px solid #e6eef5; box-shadow: -10px 0 30px rgba(0,0,0,.08); transform: translateX(100%); transition: .3s ease; display:flex; flex-direction:column; }
+    .drawer.open{ transform: translateX(0); }
+    .drawer-header{ padding: 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eef3f7; }
+    .drawer-body{ padding: 14px; overflow:auto; display:flex; flex-direction:column; gap:12px; }
+    .line{ display:flex; align-items:center; justify-content:space-between; gap:10px; background:#fbfdff; border:1px solid #eef3f7; border-radius: 14px; padding:10px; }
+    .total{ margin-top: 8px; font-weight:700; display:flex; justify-content:space-between; }
+    .checkout{ display:flex; flex-direction:column; gap:10px; margin-top: 12px; }
+    .checkout input, .checkout textarea, .checkout select{ width:100%; padding:10px 12px; border-radius: 12px; border:1px solid #cdd9e3; }
+
+    /* Footer */
+    footer{ background: #082a44; color:#eaf6ff; margin-top: 34px; }
+    .footer-inner{ max-width: 1200px; margin:0 auto; padding: 34px 20px; display:grid; grid-template-columns: 2fr 1fr 1fr 1.2fr; gap: 20px; }
+    .footer-inner h4{ margin: 0 0 10px; }
+    .footer-inner a{ color:#eaf6ff; text-decoration:none; opacity:.9; }
+    .newsletter{ display:flex; gap:8px; }
+    .newsletter input{ flex:1; padding:10px 12px; border-radius: 12px; border: none; }
+    .newsletter button{ border:none; border-radius: 12px; padding:10px 14px; background: var(--aqua); color: white; font-weight:600; }
+    .subfooter{ text-align:center; padding: 10px 20px; border-top: 1px solid #0f3c61; font-size:.9rem; opacity:.85; }
+    .logo img {
+  height: 80px; /* adjust as needed */
+  width: auto;
+  vertical-align: middle;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font size */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .brand {
+    font-size: 1.8rem; /* Slightly smaller font size */
+  }
+}
+
+@media (max-width: 520px) {
+  .brand {
+    font-size: 1.5rem; /* Even smaller for mobile */
+    gap: 3px; /* Reduce gap between logo and text */
+  }
+  
+  .logo img {
+    height: 60px; /* Smaller logo on mobile */
+  }
+}
+
+@media (max-width: 400px) {
+  .brand {
+    font-size: 1.2rem; /* Very small screens */
+  }
+  
+  .logo img {
+    height: 50px;
+  }
+}
+/* Hide completely when empty */
+#featured:empty, #featured[style*="display: none"] {
+  display: none !important;
+}
+
+/* Style for the order count badge */
+.pill[style*="background:var(--accent)"] {
+  font-weight: 700;
+  padding: 5px 10px;
+  margin: 5px 0;
+}
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  background: #25D366;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  background: #128C7E;
+  transform: scale(1.1);
+}
+
+.whatsapp-float svg {
+  width: 30px;
+  height: 30px;
+}
+
+/* Tooltip text */
+.whatsapp-float::after {
+  content: "Chat with Us";
+  position: absolute;
+  right: 70px;
+  white-space: nowrap;
+  background: var(--deep);
+  color: white;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.whatsapp-float:hover::after {
+  opacity: 1;
+}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="nav">
+    <div class="brand">
+        <div class="logo">
+          <a href="index.html">
+            <img src="https://ripzmgoqtpsejmyzkhde.supabase.co/storage/v1/object/public/images/logo.png" alt="ShaSea Fisheries Logo">
+          </a>
+        </div>
+        ShaSea Fisheries LTD
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#shop">Shop</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li>
+            <button class="btn btn-secondary" id="openCart">
+              Cart (<span id="cartCount">0</span>)
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+
+  <!-- Hero -->
+  <section class="hero container" id="home">
+    <div class="hero-card">
+      <span class="pill">Premium Quality • Same‑day handling</span>
+      <h1>Fresh from the Sea to Your Table</h1>
+      <p>Order fresh, sustainably sourced fish and seafood. Priced per kilogram with transparent availability. Pickup & local delivery options available at checkout.</p>
+      <div class="hero-cta">
+        <a href="#shop" class="btn btn-primary">Shop Fish</a>
+        
+      </div>
+    </div>
+    <img id="heroImg" src="https://ripzmgoqtpsejmyzkhde.supabase.co/storage/v1/object/public/images/hero.png" alt="Fresh fish on ice" />
+  </section>
+
+  <!-- Featured -->
+  <section class="container" id="featured">
+    <div class="section-title">
+      <h2>Popular Picks</h2>
+      <a href="#shop" class="pill">See all fish →</a>
+    </div>
+    <div class="grid" id="featuredGrid"></div>
+  </section>
+
+  <!-- Shop -->
+  <section class="container" id="shop">
+    <div class="section-title">
+      <h2>Shop Fresh Fish</h2>
+      <button class="btn" onclick="sortByPrice()">Sort by Price</button>
+    </div>
+    <div class="grid" id="productGrid"></div>
+    <div class="bar"><div class="cart-bar"><strong>Total:</strong> <span id="barTotal">GHS 0.00</span> <button class="btn btn-primary" id="openCart2">Open Cart</button></div></div>
+  </section>
+
+  <!-- About & Contact -->
+  <section class="container" id="about">
+    <div class="section-title"><h2>About Us</h2></div>
+    <p>ShaSea Fish LTD sources daily from trusted fisheries. We prioritize freshness, cold‑chain logistics, and fair pricing for families and restaurants alike.</p>
+  </section>
+  <section class="container" id="contact">
+    <div class="section-title"><h2>Contact</h2></div>
+    <p>Email: belongzy123@gmail.com • Phone: +233 542666327</p>
+  </section>
+
+  <!-- Cart Drawer -->
+  <aside class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <strong>Your Cart</strong>
+      <button class="btn" onclick="toggleCart(false)">Close ✕</button>
+    </div>
+    <div class="drawer-body">
+      <div id="cartLines"></div>
+      <div class="total"><span>Subtotal</span><span id="subtotal">GHS 0.00</span></div>
+      <div class="total"><span>Delivery (flat)</span><span id="deliveryFee">GHS 20.00</span></div>
+      <div class="total"><span><big>Total</big></span><span id="grandTotal"><big>GHS 0.00</big></span></div>
+      <div class="checkout">
+        <input id="custName" placeholder="Full Name" />
+        <input id="custPhone" placeholder="Phone (WhatsApp)" />
+        <textarea id="custAddr" rows="3" placeholder="Delivery Address"></textarea>
+        <select id="payMethod">
+          <option value="Momo">Mobile Money</option>
+          <option value="COD">Cash on Delivery</option>
+        </select>
+        <button class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+        <button class="btn" onclick="clearCart()">Clear Cart</button>
+      </div>
+      <p class="empty" id="emptyMsg" style="display:none;">Your cart is empty. Add some fresh fish!</p>
+    </div>
+  </aside>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <h4>ShaSea Fisheries LTD</h4>
+        <p>Fresh seafood delivered with care. From the morning catch to your kitchen, fast.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="#home">Home</a></p>
+        <p><a href="#shop">Shop</a></p>
+        <p><a href="#about">About</a></p>
+        <p><a href="#contact">Contact</a></p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>belongzy123@gmail.com</p>
+        <p>+233 542666327</p>
+        <p>Accra, Ghana</p>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <div class="newsletter">
+          <input placeholder="" />
+          <button>Subscribe</button>
+        </div>
+      </div>
+    </div>
+    <div class="subfooter">© <span id="year"></span> ShaSea Fisheries LTD. All rights reserved.</div>
+  </footer>
+  <!-- WhatsApp Floating Button -->
+<a href="https://wa.me/233542666327?text=Hello%20ShaSea%20Fisheries,%20I%20have%20a%20question%20about..." 
+class="whatsapp-float" 
+target="_blank"
+aria-label="Contact us on WhatsApp">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+ <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-12.35c-5.297 0-9.588 4.29-9.588 9.586 0 1.918.566 3.703 1.543 5.2L1.2 21.61l3.28-3.28c1.4.917 3.05 1.442 4.793 1.442 5.297 0 9.59-4.29 9.59-9.587 0-5.297-4.293-9.587-9.59-9.587"/>
+</svg>
+</a>
+
+  <!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ======= CONFIG =======
+  const SUPABASE_URL = "https://ripzmgoqtpsejmyzkhde.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcHptZ29xdHBzZWpteXpraGRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTc4NTgsImV4cCI6MjA3MDY5Mzg1OH0.OH-HTDASDnuWZ9lbPtttWqXBszgyvP5KtVfmj04R8Ck";
+  const shopNumber = '233542666327'; // WhatsApp number (international format)
+
+  // ======= SUPABASE CLIENT =======
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false }
+  });
+  console.log("✅ Supabase client ready");
+
+  // Quick DB check
+  async function checkDB() {
+    const { data, error } = await supabase.from('products').select('*').limit(1);
+    if (error) console.error("❌ DB check failed:", error.message);
+    else console.log("🔎 Sample products:", data);
+  }
+  checkDB();
+
+  // ======= STATE =======
+  const cart = [];
+  let products = [];
+
+  // ======= HELPERS =======
+  const money = (n) => `GHS ${Number(n).toFixed(2)}`;
+  const kg = (val) => Math.max(0.5, Number(val || 1));
+  function scrollToFeatured(){ document.getElementById('featured')?.scrollIntoView({ behavior:'smooth' }); }
+
+  function toggleCart(open){
+    const drawer = document.getElementById('cartDrawer');
+    drawer.classList.toggle('open', open);
+    drawer.setAttribute('aria-hidden', open? 'false':'true');
+  }
+
+  function cartTotals(){
+    const subtotal = cart.reduce((s,i)=> s + i.price * i.kg, 0);
+    const delivery = cart.length ? 20 : 0;
+    return { subtotal, delivery, total: subtotal + delivery };
+  }
+
+  function renderBar(){
+    const { total } = cartTotals();
+    const barTotal = document.getElementById('barTotal');
+    const cartCount = document.getElementById('cartCount');
+    if (barTotal) barTotal.textContent = money(total);
+    if (cartCount) cartCount.textContent = cart.length;
+  }
+
+  function renderCart(){
+    const wrap = document.getElementById('cartLines');
+    const empty = document.getElementById('emptyMsg');
+    if (!wrap) return;
+
+    if(cart.length===0){
+      wrap.innerHTML='';
+      if (empty) empty.style.display='block';
+    } else {
+      if (empty) empty.style.display='none';
+      wrap.innerHTML = cart.map(i=>`
+        <div class="line">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${i.img_url}" alt="${i.name}" style="width:56px;height:56px;object-fit:cover;border-radius:12px;">
+            <div>
+              <div><strong>${i.name}</strong></div>
+              <div style="font-size:.9rem;">${money(i.price)} / kg</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="number" min="0.5" step="0.5" value="${i.kg}" onchange="updateKg(${i.id}, this.value)">
+            <div style="width:90px; text-align:right;">${money(i.price * i.kg)}</div>
+            <button class="btn" onclick="removeFromCart(${i.id})">🗑️</button>
+          </div>
+        </div>`).join('');
+    }
+    const { subtotal, delivery, total } = cartTotals();
+    const subtotalEl = document.getElementById('subtotal');
+    const deliveryFeeEl = document.getElementById('deliveryFee');
+    const grandTotalEl = document.getElementById('grandTotal');
+    if (subtotalEl) subtotalEl.textContent = money(subtotal);
+    if (deliveryFeeEl) deliveryFeeEl.textContent = money(delivery);
+    if (grandTotalEl) grandTotalEl.textContent = money(total);
+  }
+
+  function addToCart(pid){
+    const p = products.find(x=>x.id===pid);
+    if(!p || !p.available) return alert('This item is currently unavailable.');
+    const qtyEl = document.getElementById(`qty-${pid}`);
+    const amountKg = kg(qtyEl?.value);
+    const existing = cart.find(x=>x.id===pid);
+    if(existing){ existing.kg += amountKg; }
+    else {
+      cart.push({
+        id: p.id,
+        name: p.name,
+        price: Number(p.price),
+        kg: amountKg,
+        img_url: p.image_url
+      });
+    }
+    renderCart();
+    renderBar();
+    toggleCart(true);
+  }
+
+  function updateKg(pid, value){
+    const item = cart.find(x=>x.id===pid);
+    if(!item) return;
+    item.kg = kg(value);
+    renderCart();
+    renderBar();
+  }
+
+  function removeFromCart(pid){
+    const idx = cart.findIndex(x=>x.id===pid);
+    if(idx>-1){ cart.splice(idx,1); }
+    renderCart();
+    renderBar();
+  }
+
+  function clearCart(){
+    cart.length = 0;
+    renderCart();
+    renderBar();
+  }
+
+  function productCard(p){
+    const disabled = !p.available ? 'disabled' : '';
+    const availability = p.available ? '<span class="availability in">Available</span>' : '<span class="availability out">Not Available</span>';
+    const img = p.image_url || 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1480&auto=format&fit=crop';
+    return `
+    <div class="card">
+      <img src="${img}" alt="${p.name}">
+      <div class="content">
+        <strong>${p.name}</strong>
+        <span style="font-size:.9rem;opacity:.9;">${p.description ?? ''}</span>
+        <span class="price">${money(p.price)} / kg</span>
+        ${availability}
+        <div class="qty-row">
+          <input type="number" min="0.5" step="0.5" value="1" id="qty-${p.id}" ${disabled}>
+          <button class="btn btn-secondary" ${disabled} onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderProducts(){
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    grid.innerHTML = products.map(productCard).join('');
+  }
+
+  async function renderPopularPicks() {
+  const grid = document.getElementById('featuredGrid');
+  if (!grid) return;
+
+  try {
+    // 1. Get products ordered 500+ times
+    const { data: popularProducts, error } = await supabase
+      .from('orders')
+      .select('product_id, count') 
+      .group('product_id')
+      .gte('count', 500) // Only products with ≥500 orders
+      .order('count', { ascending: false });
+
+    if (error) throw error;
+
+    // 2. If no products meet threshold, hide section completely
+    if (!popularProducts || popularProducts.length === 0) {
+      grid.innerHTML = '';
+      document.getElementById('featured').style.display = 'none';
+      return;
+    }
+
+    // 3. Get product details for qualifying items
+    const productIds = popularProducts.map(p => p.product_id);
+    const { data: products } = await supabase
+      .from('products')
+      .select('*')
+      .in('id', productIds)
+      .eq('available', true);
+
+    // 4. Render only 500+ ordered products
+    grid.innerHTML = products.map(p => {
+      const orderCount = popularProducts.find(op => op.product_id === p.id)?.count;
+      return `
+        <div class="card">
+          <img src="${p.image_url}" alt="${p.name}">
+          <div class="content">
+            <strong>${p.name}</strong>
+            <span class="price">${money(p.price)} / kg</span>
+            <span class="pill" style="background:var(--accent);color:white;">
+              🔥 ${orderCount.toLocaleString()} orders
+            </span>
+            <div class="qty-row">
+              <input type="number" min="0.5" step="0.5" value="1" id="qty-${p.id}">
+              <button class="btn btn-secondary" onclick="addToCart(${p.id})">
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (error) {
+    console.error("Error loading popular picks:", error);
+    grid.innerHTML = '';
+    document.getElementById('featured').style.display = 'none';
+  }
+}
+
+function sortByPrice() {
+  if (!Array.isArray(products)) {
+    console.error('Products is not an array');
+    return;
+  }
+  
+  products.sort((a, b) => {
+    const priceA = Number(a.price) || 0;
+    const priceB = Number(b.price) || 0;
+    return priceA - priceB;
+  });
+  
+  renderProducts();
+}
+
+  // ======= CHECKOUT =======
+  async function placeOrder(){
+    if(cart.length===0) return alert('Your cart is empty.');
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const addr = document.getElementById('custAddr').value.trim();
+    const pay = document.getElementById('payMethod').value;
+    if(!name||!phone||!addr) return alert('Please fill name, phone, and address.');
+
+    const { total } = cartTotals();
+    const order_ref = crypto.randomUUID();
+
+    // Adjust these columns to match your real "orders" table
+    const rows = cart.map(i=>({
+      order_ref,
+      product_id: i.id,
+      quantity_kg: i.kg,
+      price_at_order: i.price,
+      line_total: i.price * i.kg,
+      customer_name: name,
+      customer_phone: phone,
+      address: addr,
+      payment_method: pay
+    }));
+
+    const { error } = await supabase.from('orders').insert(rows);
+    if(error){ console.error(error); return alert('Could not save order. Please try again.'); }
+
+    const lines = cart.map(i=> `${i.name} – ${i.kg} kg x ${money(i.price)} = ${money(i.price*i.kg)}`).join('%0A');
+    const msg = `Hello ShaSea Fish,%0A%0AOrder Ref: ${order_ref}%0A${lines}%0A%0ATotal: ${money(total)}%0AName: ${encodeURIComponent(name)}%0APhone: ${encodeURIComponent(phone)}%0AAddress: ${encodeURIComponent(addr)}%0APayment: ${encodeURIComponent(pay)}`;
+    const wa = `https://wa.me/${shopNumber}?text=${msg}`;
+    const mail = `mailto: belongzy123@gmail.com?subject=New%20Order%20${order_ref}&body=${msg}`;
+
+    window.open(wa, '_blank');
+    window.open(mail, '_blank');
+    alert('Order placed! We opened WhatsApp (and email as fallback).');
+    clearCart();
+    toggleCart(false);
+  }
+
+  // ======= DATA FETCH =======
+  async function loadProducts(){
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, description, price, image_url, available')
+      .order('name', { ascending: true });
+
+    if(error){ console.error(error); return alert('Failed to load products'); }
+
+    // Ensure price is a number for math
+    products = (data || []).map(p => ({ ...p, price: Number(p.price) }));
+
+    
+    renderProducts();
+    await renderPopularPicks(); 
+  }
+
+  // ======= REALTIME PRODUCT UPDATES =======
+  function subscribeProducts(){
+    supabase
+      .channel('public:products')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+        loadProducts(); // refresh when a product is inserted/updated/deleted
+      })
+      .subscribe();
+  }
+
+  // ======= INIT =======
+  function init(){
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+    const openCart = document.getElementById('openCart');
+    const openCart2 = document.getElementById('openCart2');
+    if (openCart) openCart.addEventListener('click', ()=> toggleCart(true));
+    if (openCart2) openCart2.addEventListener('click', ()=> toggleCart(true));
+
+    loadProducts();
+    renderBar();
+    subscribeProducts();
+  }
+  document.addEventListener('DOMContentLoaded', init);
+
+  // Expose for inline handlers
+  window.addToCart = addToCart;
+  window.updateKg = updateKg;
+  window.removeFromCart = removeFromCart;
+  window.clearCart = clearCart;
+  window.sortByPrice = sortByPrice;
+  window.placeOrder = placeOrder;
+  window.scrollToFeatured = scrollToFeatured;
+</script>

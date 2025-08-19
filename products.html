@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ShaSea Fish LTD — Products</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Fonts / Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+    body { background:#f8fafc; color:#1f2937; font-size:16px; line-height:1.6; }
+
+    header.topbar { display:flex; justify-content:space-between; align-items:center; background:#0ea5e9; color:#fff; padding:1rem 2rem; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    header.topbar h1 { font-size:1.4rem; font-weight:600; }
+    .back-link { color:white; text-decoration:none; display:flex; align-items:center; gap:0.5rem; }
+
+    .container { padding:2rem; max-width:1200px; margin:auto; }
+    .toolbar { display:flex; justify-content:space-between; margin-bottom:1.5rem; align-items:center; gap:1rem; flex-wrap:wrap; }
+    .search-wrap { display:flex; align-items:center; gap:0.5rem; }
+    .search-wrap input { padding:0.5rem 0.8rem; border-radius:8px; border:1px solid #d1d5db; outline:none; }
+
+    table { width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden; }
+    th, td { padding:0.8rem; text-align:left; }
+    th { background:#f1f5f9; font-weight:600; color:#475569; }
+    tbody tr { border-bottom:1px solid #e5e7eb; transition:0.2s; }
+    tbody tr:hover { background:#f9fafb; }
+    td img { width:50px; height:50px; border-radius:6px; object-fit:cover; }
+    td:nth-child(3), th:nth-child(3) {
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    td:nth-child(3):hover {
+      white-space: normal;
+      overflow: visible;
+      background: #f9fafb;
+      position: relative;
+      z-index: 10;
+    }
+    .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+    }
+    table {
+    min-width: 700px; /* prevent collapsing */
+    }
+    header.topbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    }
+    header.topbar h1 {
+    font-size: 1.2rem;
+    }
+    .btn, .action-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    }
+    .search-wrap input {
+    width: 100%;
+    max-width: 250px;
+    }
+    @media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .modal-card {
+    width: 95%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  header.topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .topbar-right {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  th, td {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+  td img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+    .btn { padding:0.5rem 1rem; border:none; border-radius:6px; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:0.3rem; }
+    .btn-primary { background:#0ea5e9; color:white; }
+    .btn-primary:hover { background:#0284c7; }
+
+    .action-btn { border:none; padding:0.4rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.85rem; margin-right:0.3rem; }
+    .action-btn.edit { background:#f59e0b; color:white; }
+    .action-btn.edit:hover { background:#d97706; }
+    .action-btn.delete { background:#ef4444; color:white; }
+    .action-btn.delete:hover { background:#dc2626; }
+    .action-btn.available { background:#22c55e; color:white; }
+    .action-btn.available:hover { background:#16a34a; }
+    .action-btn.unavailable { background:#ef4444; color:white; }
+    .action-btn.unavailable:hover { background:#dc2626; }
+
+    .empty { text-align:center; padding:2rem; color:#6b7280; }
+    .modal { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; visibility:hidden; opacity:0; transition:0.3s; z-index:1000; }
+    .modal.active { visibility:visible; opacity:1; }
+    .modal-card { background:white; border-radius:12px; width:400px; max-width:90%; padding:1.5rem; position:relative; }
+    .modal-card h3 { margin-bottom:1rem; color:#0f172a; }
+    .modal-card label { display:block; margin-bottom:0.5rem; font-weight:500; color:#374151; }
+    .modal-card input, .modal-card textarea { width:100%; padding:0.5rem; margin-bottom:1rem; border:1px solid #d1d5db; border-radius:8px; outline:none; }
+    .modal-card input:focus, .modal-card textarea:focus { border-color:#0ea5e9; box-shadow:0 0 0 3px rgba(14,165,233,0.2); }
+    .modal-actions { display:flex; justify-content:flex-end; gap:0.5rem; }
+    .icon-btn { background:none; border:none; cursor:pointer; font-size:1.2rem; position:absolute; top:12px; right:12px; }
+    .icon-btn:hover { color:#dc2626; }
+
+    .toast { position:fixed; bottom:20px; right:20px; background:#0ea5e9; color:white; padding:0.8rem 1.2rem; border-radius:8px; font-size:0.9rem; opacity:0; transform:translateY(20px); transition:0.3s ease; z-index:2000; }
+    .toast.show { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="admin-dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <h1>Fish Products</h1>
+    </div>
+    <div class="topbar-right">
+      <button id="addProductBtn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Product</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="table-wrap">
+        <table id="productsTable">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price / kg</th>
+              <th>Availability</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" class="modal hidden">
+    <div class="modal-card">
+      <button type="button" class="icon-btn" data-close-modal>
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 id="modalTitle">Add Product</h3>
+      <label>Name <input id="productName" type="text" required /></label>
+      <label>Description <textarea id="productDescription"></textarea></label>
+      <label>Price per kg <input id="productPrice" type="number" min="0" step="0.01" required /></label>
+      <label>Image <input id="productImage" type="file" accept="image/*" /></label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient("https://ripzmgoqtpsejmyzkhde.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpcHptZ29xdHBzZWpteXpraGRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTc4NTgsImV4cCI6MjA3MDY5Mzg1OH0.OH-HTDASDnuWZ9lbPtttWqXBszgyvP5KtVfmj04R8Ck");
+
+    const tableBody = document.getElementById('productsTableBody');
+    const addProductBtn = document.getElementById('addProductBtn');
+    const modal = document.getElementById('productModal');
+    const saveBtn = document.getElementById('saveBtn');
+    const productNameInput = document.getElementById('productName');
+    const productDescInput = document.getElementById('productDescription');
+    const productPriceInput = document.getElementById('productPrice');
+    const productImageInput = document.getElementById('productImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const toast = document.getElementById('toast');
+
+    let editingProductId = null;
+
+    function showToast(msg, type="success") {
+      toast.textContent = msg;
+      toast.style.background = type==="error"?"#ef4444":"#0ea5e9";
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 3000);
+    }
+
+    async function fetchProducts() {
+      const { data, error } = await supabase.from('products').select('*').order('id',{ascending:true});
+      if(error){ showToast("Error loading products","error"); return; }
+      renderProducts(data);
+    }
+
+    function renderProducts(products) {
+      tableBody.innerHTML = "";
+      if(!products.length){ 
+        tableBody.innerHTML = `<tr><td colspan="6" class="empty">No products yet</td></tr>`; 
+        return; 
+      }
+      products.forEach(p=>{
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${p.image_url||'https://via.placeholder.com/50'}"/></td>
+          <td>${p.name}</td>
+          <td>${p.description||'-'}</td>
+          <td>₵${p.price.toFixed(2)}</td>
+          <td>
+            <button class="action-btn ${p.available ? 'available' : 'unavailable'}"
+              onclick="toggleAvailability(${p.id}, ${p.available})">
+              ${p.available ? 'Available' : 'Not Available'}
+            </button>
+          </td>
+          <td>
+            <button class="action-btn edit" onclick="openEditModal(${p.id}, '${p.name}', '${p.description}', ${p.price})">Edit</button>
+            <button class="action-btn delete" onclick="deleteProduct(${p.id})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function openAddModal(){
+      editingProductId = null;
+      modal.classList.add('active');
+      modalTitle.textContent = "Add Product";
+      productNameInput.value = "";
+      productDescInput.value = "";
+      productPriceInput.value = "";
+      productImageInput.value = "";
+    }
+
+    window.openEditModal = function(id,name,desc,price){
+      editingProductId = id;
+      modal.classList.add('active');
+      modalTitle.textContent = "Edit Product";
+      productNameInput.value = name;
+      productDescInput.value = desc;
+      productPriceInput.value = price;
+      productImageInput.value = "";
+    }
+
+    function closeModal(){ modal.classList.remove('active'); }
+
+    async function saveProduct(){
+      const name = productNameInput.value.trim();
+      const description = productDescInput.value.trim();
+      const price = parseFloat(productPriceInput.value);
+
+      if(!name || isNaN(price)){ showToast("Fill all required fields","error"); return; }
+
+      let imageUrl = null;
+      if (productImageInput.files.length > 0) {
+        try {
+          const file = productImageInput.files[0];
+          const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+          const maxSize = 10 * 1024 * 1024;
+          if (!validTypes.includes(file.type)) { showToast("Only JPG, PNG, or WEBP allowed", "error"); return; }
+          if (file.size > maxSize) { showToast("Image must be <10MB", "error"); return; }
+          const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+          const { error: uploadError } = await supabase.storage.from('images').upload(fileName, file);
+          if (uploadError) { showToast("Upload failed", "error"); return; }
+          const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(fileName);
+          imageUrl = publicUrl;
+        } catch { showToast("Unexpected error uploading image","error"); return; }
+      }
+
+      if(editingProductId){
+        const { error } = await supabase.from('products').update({
+          name, description, price, ...(imageUrl&&{image_url:imageUrl})
+        }).eq('id',editingProductId);
+        if(error){ showToast("Update failed","error"); return; }
+        showToast("Product updated");
+      }else{
+        const { error } = await supabase.from('products').insert([{
+          name, description, price, available:true, image_url:imageUrl
+        }]);
+        if(error){ showToast("Insert failed","error"); return; }
+        showToast("Product added");
+      }
+      closeModal();
+      fetchProducts();
+    }
+
+    window.deleteProduct = async function(id){
+      if(!confirm("Delete this product?")) return;
+      const { error } = await supabase.from('products').delete().eq('id',id);
+      if(error){ showToast("Delete failed","error"); return; }
+      showToast("Product deleted");
+      fetchProducts();
+    }
+
+    window.toggleAvailability = async function(id,current){
+      const { error } = await supabase.from('products').update({available:!current}).eq('id',id);
+      if(error){ showToast("Update failed","error"); return; }
+      showToast(`Product marked as ${!current ? 'Available' : 'Not Available'}`);
+      fetchProducts();
+    }
+
+    addProductBtn.addEventListener('click', openAddModal);
+    saveBtn.addEventListener('click', saveProduct);
+    document.querySelectorAll('[data-close-modal]').forEach(btn => btn.addEventListener('click', closeModal));
+
+    fetchProducts();
+  </script>
+</body>
+</html>
